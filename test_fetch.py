@@ -1,10 +1,5 @@
-import os
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-
-TOKEN = os.environ["TELEGRAM_TOKEN"]
-CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
 URL = "https://www.michaelpage.co.in/jobs/fmcg"
 
@@ -39,39 +34,7 @@ for link in soup.find_all("a"):
                 jobs.add(full_url)
                 break
 
-message = f"""
-Good Morning Karthik
-
-Marketing Leadership Job Scan
-
-Date: {datetime.now().strftime('%d-%b-%Y')}
-
-Jobs Found: {len(jobs)}
-
-"""
-
-count = 1
+print("\nMatching Jobs Found:\n")
 
 for job in sorted(jobs):
-    if count > 15:
-        break
-
-    title = job.split("/job-detail/")[1].split("/ref")[0]
-    title = title.replace("-", " ").title()
-
-    message += f"\n{count}. {title}\n{job}\n"
-
-    count += 1
-
-url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-
-response = requests.post(
-    url,
-    json={
-        "chat_id": CHAT_ID,
-        "text": message[:4000]
-    }
-)
-
-print(response.status_code)
-print(response.text)
+    print(job)
