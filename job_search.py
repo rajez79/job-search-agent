@@ -24,7 +24,7 @@ companies = [
 ]
 
 message = f"""
-Good Morning Raja
+Good Morning Karthik
 
 Marketing Leadership Job Scan
 
