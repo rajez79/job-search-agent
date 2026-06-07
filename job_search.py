@@ -1,18 +1,23 @@
+import os
 import requests
 
-TOKEN = "7987267470:AAH10nc5oXk1igpLJNTd60yJnY8-7QQAz1Q"
-CHAT_ID = "868452309"
+TOKEN = os.environ["TELEGRAM_TOKEN"]
+CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+
+message = """
+Good Morning Raja
+
+GitHub Action is working successfully.
+"""
 
 url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
-payload = {
-    "chat_id": CHAT_ID,
-    "text": "Hello Raja! Testing Telegram Bot."
-}
+response = requests.post(
+    url,
+    json={
+        "chat_id": CHAT_ID,
+        "text": message
+    }
+)
 
-print("URL:", url)
-
-response = requests.post(url, json=payload)
-
-print("Status:", response.status_code)
-print("Response:", response.text)
+print(response.text)
