@@ -19,7 +19,7 @@ CAREER_SITES = [
 "https://www.amrutanjan.com/careers/",
 "https://careers.drreddys.com/",
 "https://www.titancompany.in/careers",
-"https://www.cavinkare.com/careers/",
+"https://cavinkare.turbohire.co/",
 "https://www.michaelpage.co.in/jobs/fmcg",
 "https://www.cielhr.com/jobs/fmcg"
 ]
