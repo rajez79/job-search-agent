@@ -69,6 +69,7 @@ print(f"Scanning: {site}")
         href_lower = href.lower()
 
         if any(keyword in href_lower for keyword in KEYWORDS):
+
             if href.startswith("http"):
                 jobs.add(href)
             else:
@@ -96,9 +97,7 @@ message += f"{idx}. {job}\n\n"
 print(f"Jobs found: {len(jobs)}")
 print("Sending Telegram message...")
 
-telegram_url = (
-f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-)
+telegram_url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 response = requests.post(
 telegram_url,
