@@ -48,7 +48,7 @@ jobs = set()
 
 for site in CAREER_SITES:
 try:
-print(f"Scanning: {site}")
+    print(f"Scanning: {site}")
 
     response = requests.get(
         site,
