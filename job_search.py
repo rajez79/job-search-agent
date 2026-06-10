@@ -6,72 +6,119 @@ from datetime import datetime
 TOKEN = os.environ["TELEGRAM_TOKEN"]
 CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-URL = "https://www.michaelpage.co.in/jobs/fmcg"
-
-KEYWORDS = [
-    "marketing",
-    "brand",
-    "cmo",
-    "category",
-    "director",
-    "head",
-    "lead"
+CAREER_SITES = [
+"https://www.hul.co.in/careers/",
+"https://www.itcportal.com/careers/index.aspx",
+"https://www.dabur.com/careers",
+"https://marico.com/india/careers",
+"https://www.godrejcareers.com/",
+"https://www.britannia.co.in/careers",
+"https://www.nestle.in/jobs",
+"https://www.pgcareers.com/in/en",
+"https://www.hccb.in/career",
+"https://www.amrutanjan.com/careers/",
+"https://careers.drreddys.com/",
+"https://www.titancompany.in/careers",
+"https://www.cavinkare.com/careers/",
+"https://www.michaelpage.co.in/jobs/fmcg",
+"https://www.cielhr.com/jobs/fmcg"
 ]
 
-html = requests.get(URL, timeout=20).text
+KEYWORDS = [
+"marketing",
+"brand",
+"cmo",
+"category",
+"director",
+"head",
+"lead",
+"marketing-manager",
+"marketing-head",
+"brand-manager",
+"head-of-marketing"
+]
 
-soup = BeautifulSoup(html, "html.parser")
+HEADERS = {
+"User-Agent": "Mozilla/5.0"
+}
+
+print("Karthikeyan Job Agent Started")
 
 jobs = set()
 
-for link in soup.find_all("a"):
-    href = link.get("href")
+for site in CAREER_SITES:
 
-    if not href:
-        continue
+```
+try:
+    print(f"Scanning: {site}")
 
-    href_lower = href.lower()
+    response = requests.get(
+        site,
+        headers=HEADERS,
+        timeout=30
+    )
 
-    if "/job-detail/" in href_lower:
-        for keyword in KEYWORDS:
-            if keyword in href_lower:
-                full_url = "https://www.michaelpage.co.in" + href
-                jobs.add(full_url)
-                break
+    response.raise_for_status()
 
-message = f"""
-Good Morning Karthik
+    soup = BeautifulSoup(
+        response.text,
+        "html.parser"
+    )
 
-Marketing Leadership Job Scan
+    for link in soup.find_all("a", href=True):
 
-Date: {datetime.now().strftime('%d-%b-%Y')}
+        href = link["href"]
+        href_lower = href.lower()
 
-Jobs Found: {len(jobs)}
+        if any(
+            keyword in href_lower
+            for keyword in KEYWORDS
+        ):
 
-"""
+            if href.startswith("http"):
+                jobs.add(href)
+            else:
+                jobs.add(
+                    requests.compat.urljoin(
+                        site,
+                        href
+                    )
+                )
 
-count = 1
+except Exception as e:
+    print(f"Error scanning {site}: {e}")
+```
 
-for job in sorted(jobs):
-    if count > 15:
-        break
-
-    title = job.split("/job-detail/")[1].split("/ref")[0]
-    title = title.replace("-", " ").title()
-
-    message += f"\n{count}. {title}\n{job}\n"
-
-    count += 1
-
-url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-
-response = requests.post(
-    url,
-    json={
-        "chat_id": CHAT_ID,
-        "text": message[:4000]
-    }
+message = (
+f"Daily Marketing Leadership Job Scan\n\n"
+f"Candidate: Karthikeyan R\n"
+f"Date: {datetime.now().strftime('%d-%b-%Y')}\n"
+f"Jobs Found: {len(jobs)}\n\n"
 )
 
-print(response.status_code)
+if len(jobs) == 0:
+message += "No matching jobs found today.\n"
+
+for idx, job in enumerate(sorted(jobs)[:15], start=1):
+message += f"{idx}. {job}\n\n"
+
+print(f"Jobs found: {len(jobs)}")
+print("Sending Telegram message...")
+
+telegram_url = (
+f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+)
+
+response = requests.post(
+telegram_url,
+json={
+"chat_id": CHAT_ID,
+"text": message[:4000]
+},
+timeout=30
+)
+
+print("Telegram Status:", response.status_code)
 print(response.text)
+
+response.raise_for_status()
