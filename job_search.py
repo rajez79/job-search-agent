@@ -50,7 +50,6 @@ for site in CAREER_SITES:
 try:
 print(f"Scanning: {site}")
 
-```
     response = requests.get(
         site,
         headers=HEADERS,
@@ -79,7 +78,6 @@ print(f"Scanning: {site}")
 
 except Exception as e:
     print(f"Error scanning {site}: {e}")
-```
 
 message = (
 f"Daily Marketing Leadership Job Scan\n\n"
