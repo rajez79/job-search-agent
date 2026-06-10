@@ -47,10 +47,10 @@ print("Karthikeyan Job Agent Started")
 jobs = set()
 
 for site in CAREER_SITES:
+try:
+print(f"Scanning: {site}")
 
-    try:
-        print(f"Scanning: {site}")
-
+```
     response = requests.get(
         site,
         headers=HEADERS,
@@ -65,23 +65,15 @@ for site in CAREER_SITES:
     )
 
     for link in soup.find_all("a", href=True):
-
         href = link["href"]
         href_lower = href.lower()
 
-        if any(
-            keyword in href_lower
-            for keyword in KEYWORDS
-        ):
-
+        if any(keyword in href_lower for keyword in KEYWORDS):
             if href.startswith("http"):
                 jobs.add(href)
             else:
                 jobs.add(
-                    requests.compat.urljoin(
-                        site,
-                        href
-                    )
+                    requests.compat.urljoin(site, href)
                 )
 
 except Exception as e:
