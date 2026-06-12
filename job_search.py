@@ -1,127 +1,69 @@
-import os
-import requests
-from bs4 import BeautifulSoup
-from datetime import datetime
+jobs = []
 
-TOKEN = os.environ["TELEGRAM_TOKEN"]
-CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+for site in JOB_SOURCES:
 
-CAREER_SITES = [
-    "https://www.hul.co.in/careers/",
-    "https://www.itcportal.com/careers/index.aspx",
-    "https://www.dabur.com/careers",
-    "https://marico.com/india/careers",
-    "https://www.godrejcareers.com/",
-    "https://www.britannia.co.in/careers",
-    "https://www.nestle.in/jobs",
-    "https://www.pgcareers.com/in/en",
-    "https://www.hccb.in/career",
-    "https://www.amrutanjan.com/careers/",
-    "https://careers.drreddys.com/",
-    "https://www.titancompany.in/careers",
-    "https://cavinkare.turbohire.co/",
-    "https://www.michaelpage.co.in/jobs/fmcg",
-    "https://www.cielhr.com/jobs/fmcg",
-]
-
-JOB_PATTERNS = [
-    "job",
-    "jobs",
-    "career",
-    "careers",
-    "vacancy",
-    "opening",
-    "position",
-    "apply",
-    "recruitment",
-]
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0"
-}
-
-print("Karthikeyan Job Agent Started")
-
-jobs = set()
-
-for site in CAREER_SITES:
     try:
         print(f"Scanning: {site}")
 
         response = requests.get(
             site,
             headers=HEADERS,
-            timeout=30,
+            timeout=30
         )
 
         response.raise_for_status()
 
         soup = BeautifulSoup(
             response.text,
-            "html.parser",
+            "html.parser"
         )
 
         for link in soup.find_all("a", href=True):
 
+            title = link.get_text(
+                " ",
+                strip=True
+            )
+
             href = link["href"]
-            href_lower = href.lower()
 
-            if any(pattern in href_lower for pattern in JOB_PATTERNS):
+            if not title:
+                continue
 
-                if not any(
-                    exclude in href_lower
-                    for exclude in [
-                        "brand",
-                        "product",
-                        "leadership",
-                        "about-us",
-                        "media",
-                        "news",
-                        "contact",
-                    ]
-                ):
+            title_lower = title.lower()
 
-                    if href.startswith("http"):
-                        jobs.add(href)
-                    else:
-                        jobs.add(
-                            requests.compat.urljoin(
-                                site,
-                                href,
-                            )
-                        )
+            if any(
+                role.lower() in title_lower
+                for role in TARGET_ROLES
+            ):
+
+                if not href.startswith("http"):
+                    href = requests.compat.urljoin(
+                        site,
+                        href
+                    )
+
+                jobs.append({
+                    "title": title,
+                    "url": href
+                })
 
     except Exception as e:
-        print(f"Error scanning {site}: {e}")
+        print(
+            f"Error scanning {site}: {str(e)}"
+        )
 
-message = (
-    f"Daily Marketing Leadership Job Scan\n\n"
-    f"Candidate: Karthikeyan R\n"
-    f"Date: {datetime.now().strftime('%d-%b-%Y')}\n"
-    f"Jobs Found: {len(jobs)}\n\n"
-)
+unique_jobs = []
+seen_urls = set()
 
-if len(jobs) == 0:
-    message += "No matching jobs found today.\n"
+for job in jobs:
 
-for idx, job in enumerate(sorted(jobs)[:15], start=1):
-    message += f"{idx}. Career Link\n{job}\n\n"
+    if job["url"] not in seen_urls:
 
-print(f"Jobs found: {len(jobs)}")
-print("Sending Telegram message...")
+        seen_urls.add(
+            job["url"]
+        )
 
-telegram_url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-
-response = requests.post(
-    telegram_url,
-    json={
-        "chat_id": CHAT_ID,
-        "text": message[:4000],
-    },
-    timeout=30,
-)
-
-print("Telegram Status:", response.status_code)
-print(response.text)
-
-response.raise_for_status()
+        unique_jobs.append(
+            job
+        )
