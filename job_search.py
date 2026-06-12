@@ -1,3 +1,18 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+from datetime import datetime
+from config import TARGET_ROLES, JOB_SOURCES
+
+TOKEN = os.environ["TELEGRAM_TOKEN"]
+CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0"
+}
+
+print("Karthikeyan Job Agent Started")
+
 jobs = []
 
 for site in JOB_SOURCES:
@@ -53,17 +68,28 @@ for site in JOB_SOURCES:
             f"Error scanning {site}: {str(e)}"
         )
 
-unique_jobs = []
-seen_urls = set()
+message = (
+    f"Daily Marketing Leadership Job Scan\n\n"
+    f"Candidate: Karthikeyan R\n"
+    f"Date: {datetime.now().strftime('%d-%b-%Y')}\n"
+    f"Jobs Found: {len(jobs)}\n\n"
+)
 
-for job in jobs:
+for idx, job in enumerate(jobs[:20], start=1):
 
-    if job["url"] not in seen_urls:
+    message += (
+        f"{idx}. {job['title']}\n"
+        f"{job['url']}\n\n"
+    )
 
-        seen_urls.add(
-            job["url"]
-        )
+telegram_url = (
+    f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+)
 
-        unique_jobs.append(
-            job
-        )
+requests.post(
+    telegram_url,
+    json={
+        "chat_id": CHAT_ID,
+        "text": message[:4000]
+    }
+)
