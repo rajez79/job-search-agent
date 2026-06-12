@@ -26,6 +26,16 @@ JOB_SOURCES = [
 "https://cavinkare.turbohire.co/",
 "https://britannia.turbohire.co/",
 "https://careers.drreddys.com/jobs"
+"https://www.aachigroup.com/careers.php",
+"https://www.cholayil.com/careers.php",
+"https://mkagrotech.com/career.php",
+"https://www.lotteindia.com/careers",
+"https://www.hap.in/careers.php",
+"https://milkymist.com/careers/",
+"https://www.sakthimasala.com/careers.php",
+"https://www.avt.in/careers/",
+"https://www.mtrfoods.com/careers",
+"https://www.parryagro.com/careers/"
 ]
 
 TARGET_COMPANIES = [
