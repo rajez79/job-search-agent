@@ -27,3 +27,51 @@ JOB_SOURCES = [
 "https://britannia.turbohire.co/",
 "https://careers.drreddys.com/jobs"
 ]
+
+TARGET_COMPANIES = [
+
+# FMCG / Food
+
+"Aachi Masala",
+"Medimix",
+"Sunpure",
+"Freedom",
+"Lotte",
+"Hatsun",
+"Milky Mist",
+"Sakthi Masala",
+"AVT Group",
+"MTR",
+"Parry Sugar",
+
+# Consumer Products
+
+"Crompton",
+"Philips",
+"TTK Healthcare",
+"V-Guard",
+
+# Murugappa Group Companies
+
+"Murugappa Group",
+"Tube Investments",
+"TI Cycles",
+"Carborundum Universal",
+
+# Stationery
+
+"Classmate",
+"DOMS",
+"Camlin Kokuyo",
+"Hindustan Pencils",
+"Luxor",
+"Linc",
+"Flair",
+"Kores",
+
+# Diversified
+
+"ITC",
+"3M"
+
+]
